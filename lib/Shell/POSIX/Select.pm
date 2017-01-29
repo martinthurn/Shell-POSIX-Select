@@ -1,6 +1,6 @@
 package Shell::POSIX::Select;
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 # Tim Maher, tim@teachmeperl.com, yumpy@cpan.org
 # Fri May  2 10:29:25 PDT 2003
