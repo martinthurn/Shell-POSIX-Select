@@ -3,7 +3,7 @@ use ExtUtils::MakeMaker;
 # the contents of the Makefile that is written.
 WriteMakefile(
     'NAME'		=> 'Shell::POSIX::Select',
-    'VERSION_FROM'	=> 'Select.pm', # finds $VERSION
+    'VERSION_FROM'	=> 'lib/Shell/POSIX/Select.pm', # finds $VERSION
     'PREREQ_PM'		=> { 
 					File::Spec::Functions => 0 ,
 					Filter::Simple => 0 ,
@@ -14,6 +14,6 @@ WriteMakefile(
 #			'PLX_maker' => [ qw ( pick.plx delete_files.plx ) ]
 #		},
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM => 'Select.pm', # retrieve abstract from module
+      (ABSTRACT_FROM => 'lib/Shell/POSIX/Select.pm', # retrieve abstract from module
        AUTHOR     => 'Tim Maher <tim@teachmeperl.com>') : () ),
 );
