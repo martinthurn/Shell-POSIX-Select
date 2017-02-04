@@ -2346,9 +2346,11 @@ See L<"IMPORTS AND OPTIONS"> for details.
 =head1 AUTHOR
 
  Tim Maher
- Consultix
- yumpy@cpan.org
- http://www.teachmeperl.com
+
+=head1 MAINTAINER
+
+ Martin Thurn
+ mthurn@cpan.org
 
 =begin html
 
