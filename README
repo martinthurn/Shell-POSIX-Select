@@ -1,4 +1,4 @@
-                Shell/POSIX/Select version 0.05
+                Shell/POSIX/Select version 0.06
                 ===============================
 
 INSTALLATION
@@ -6,7 +6,6 @@ INSTALLATION
 To install this module type the following:
 
     perl Makefile.PL
-    make
     make test
     make install
 
@@ -115,9 +114,11 @@ SCRIPTS
 AUTHOR
 
     Tim Maher
-    Consultix
-    yumpy@cpan.org
-    http://www.teachmeperl.com
+
+MAINTAINER
+
+    Martin Thurn
+    mthurn@cpan.org
 
 ACKNOWLEDGEMENTS
 
@@ -156,4 +157,3 @@ LICENSE
 
     This module is free software; you can redistribute it and/or
     modify it under the same terms as Perl itself.
-
