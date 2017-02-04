@@ -2,4 +2,6 @@
 /*.sdump
 /*META*
 /*blib
+/MANIFEST
 /Makefile
+/Shell-POSIX-Select-*
