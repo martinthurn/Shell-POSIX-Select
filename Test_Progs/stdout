@@ -6,4 +6,5 @@ use blib;
 
 use Shell::POSIX::Select;
 
-select $var[0] (@ARGV) { print "$var[0]\n"; }
+print STDOUT "STDOUT\n";
+

@@ -28,3 +28,10 @@ Revision history for Perl extension Shell::POSIX::Select.
 		- removed large chunks of commented-out code, no longer needed
 		- dumbed-down the markup for SYNOPSIS in documentation, which the 
 				PAUSE version of pod2html was not handling correctly correctly.
+
+0.06  Tue Aug 11 15:28:50 CET 2009
+		changes by Przemek Czerkas <pczerkas@gmail.com>:
+		- fixed module and test.pl suite to work on MSWin32 platform
+		- explicit dependency on Text::Balanced 1.97 and Filter::Simple 0.84
+		- added more tests
+		- refreshed documentation
