@@ -125,7 +125,8 @@ $DEBUG >2 and $Shell::POSIX::Select::_testmode and warn "testmode is $Shell::POS
 
 use re 'eval';
 
-{ # scope for declaration of pre-compiled REs
+# Scope for declaration of pre-compiled REs:
+{
 my $RE_kw1 = qr^
 	(\bselect\b)
 ^x;	# extended-syntax, allowing comments, etc.
@@ -209,8 +210,8 @@ my $RE_kw_and_decl = qr^
 				$loopnum == 2 and $first_celador=$_;
 
 				$DEBUG > 1 and show_subs("****** LOOKING FOR LOOP ****** #$loopnum\n","");
-				$loopnum > 5 and warn "$subname: Might be stuck in loop\n";
-				$loopnum > 10 and die "$subname: Probably was stuck in loop\n";
+				$loopnum > 25 and warn "$subname: Might be stuck in loop\n";
+				$loopnum > 100 and die "$subname: Probably was stuck in loop\n";
 				$DEBUG > 3 and pos() and warn "pos is currently: ", pos(), "\n";
 				pos()=0;
 				/\S/ or $LOGGING and
@@ -427,13 +428,13 @@ FILTER_EXIT:
 		else  {
 				$DEBUG >2 and print TTY "LOOP DETECTED: $detect_msg\n"; exit 222;
 		}
-	}
+	} # if 0
 
 	$loopnum > 0 and $Shell::POSIX::Select::filter_output=$_;
 		$LOGGING and print USERPROG $_;	# $_ unset 2nd call; label starts below
 		$DEBUG_FILT > 2 and _WARN "Leaving $subname on call #$::_FILTER_CALLS\n";
-	}	# end sub filter
-}	# Scope for declaration of filters' REs
+	} # end sub filter
+} # Scope for declaration of filters' REs
 
 
 sub show_progress {
@@ -446,7 +447,7 @@ sub show_progress {
 	show_subs( "Match so far: ", $match, 0, 99);
 	defined $pos and warn "POS is now $pos\n";
 	show_subs( "Remaining string: ", $string, $pos, 19);
-}
+} # show_progress
 
 sub show_context {
 	my $subname = sub_name();
@@ -458,14 +459,10 @@ sub show_context {
 
 	show_subs( "Left is", $left, -10);
 	show_subs( "Right is", $right, 0, 10);
-}
-
-
-
+} # show_context
 
 # Following sub converts matched elements of users source into the 
 # fields we need: declaration (optional), loop_varname (optional), codeblock
-
 
 sub matches2fields {
 	my $subname = sub_name();
@@ -576,7 +573,7 @@ sub matches2fields {
 	defined $decl and $decl eq 'unset' and undef $decl; # pass as undef
 
 	return ( $decl, $loop_var, $values, $codeblock2, $debugging_code );
-}
+} # matches2fields
 
 sub enloop_codeblock {
 	# Wraps code implementing select-loop around user-supplied codeblock
@@ -796,7 +793,7 @@ sub enloop_codeblock {
 # ); push @parts, qq(
 
 	return ( join "", @parts );	# return assembled code, for user to run
-}
+} # enloop_codeblock
 
 sub make_menu {
 	my $subname = sub_name();
@@ -892,7 +889,7 @@ $LOGGING and print LOG "T-Cols, Columns, label: $COLS, $columns, $one_label\n";
 
 	}
 	return ( $prompt, $menu );
-}
+} # make_menu
 
 sub log_files {
 	my $subname = sub_name();
@@ -927,7 +924,7 @@ sub log_files {
 	else {	
 		$DEBUG > 0 and warn "$subname: Logfiles not opened\n"; 
 	}	
-}
+} # log_files
 
 sub sub_name {
 	my $callers_name = (caller 1)[3] ;
@@ -939,7 +936,7 @@ sub sub_name {
 	$callers_name .= '()'; # sub_name -> sub_name()
 }  
 	return $callers_name;
-}
+} # sub_name
 
 sub _WARN {
 	my $subname = sub_name();
@@ -1208,7 +1205,7 @@ $DEBUG > 2 and warn "37 Testmode set to $Shell::POSIX::Select::_testmode\n";
 	( $ON , $OFF , $BOLD ,  $SGR0 , $COLS ) =
 		display_control ($Shell::POSIX::Select::dump_data);
 		1;
-}
+} # import
 
 sub export {	# appropriated from Switch.pm
 	my $subname = sub_name();
