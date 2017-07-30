@@ -1,6 +1,6 @@
 package Shell::POSIX::Select;
 
-our $VERSION = '0.06';
+our $VERSION = '0.08';
 
 # Tim Maher, tim@teachmeperl.com, yumpy@cpan.org
 # Fri May  2 10:29:25 PDT 2003
@@ -25,6 +25,12 @@ our ( $U_WARN_default, $_import_called, $U_DEBUG, $DEBUG_FILT );
 our ( $DIRSEP, $sdump, $cdump, $script );	
 # 
 our ( @ISA, @EXPORT, $PRODUCTION, $LOGGING, $PKG, $INSTALL_TESTING,$ON,$OFF, $BOLD, $SGR0, $COLS );
+
+# What is the maximum number of columns that the user wants to see
+# on-screen?  By default, no maximum -- the number of columns will be
+# determined by the width of the terminal and the length of the meny
+# item strings.
+our $iColMax = 99;
 
 BEGIN {
 	$PKG  = __PACKAGE__ ;
@@ -188,8 +194,9 @@ my $RE_kw_and_decl = qr^
 
 		#/(..)/ and warn "Matched chars: '$1'\n";	# prime the pos marker
 
-		my $maxloops = 10;	# Probably looping out of control if we get this many
 		my $loopnum;
+                # Probably looping out of control if we get this many:
+		my $maxloops = 25;
 
 		my $first_celador;
 		if ( $last_call = ($_ eq "") ) {
@@ -856,6 +863,12 @@ sub make_menu {
 	my $one_label = ( $l_length + 2 ) + $v_length + $l_sep;
 	my $columns = int( $COLS / $one_label );
 	$columns < 1 and $columns = 1;
+        # Do not let the number of columns grow beyond the maximum:
+        if ($iColMax < $columns)
+          {
+          $columns = $iColMax;
+          } # if
+
 #	$DEBUG > 3 and
 #HERE
 $LOGGING and print LOG "T-Cols, Columns, label: $COLS, $columns, $one_label\n";
@@ -2327,7 +2340,7 @@ B<perldoc -f select>, which has nothing to do with this module
 
 =head1 VERSION
 
- This document describes version 0.06.
+This document describes version 0.08.
 
 =head1 LICENSE
 
