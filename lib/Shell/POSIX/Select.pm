@@ -66,13 +66,13 @@ $U_DEBUG=1;
 $U_DEBUG=0;
 
 $DEBUG_FILT=4;
-$DEBUG_FILT=0;
+# $DEBUG_FILT=0;
 
 $DEBUG=1; # force verbosity level for debugging messages
-$DEBUG=0; # force verbosity level for debugging messages
+# $DEBUG=0; # force verbosity level for debugging messages
 
 $REPORT=1; # report subroutines when entered
-$REPORT=0; # report subroutines when entered
+# $REPORT=0; # report subroutines when entered
 
 $DEBUG > 0 and warn "Logging is $LOGGING\n"; 
 
@@ -116,9 +116,9 @@ $LOGGING and log_files();	# open logfiles, depending on DEBUG setting
 
 $DEBUG >2 and warn "Import_called initially set to: $_import_called\n";
 
-FILTER_ONLY code_no_comments => \&filter, all => sub {
-	$LOGGING and print SOURCE;
-};
+FILTER_ONLY
+  code_no_comments => \&filter,
+  all => sub { $LOGGING and print SOURCE };
 
 $DEBUG >2 and warn "Import_called set to: $_import_called\n";
 $DEBUG >2 and $Shell::POSIX::Select::_testmode and warn "testmode is $Shell::POSIX::Select::_testmode";
@@ -179,7 +179,6 @@ my $RE_kw_and_decl = qr^
 		my $detect_msg='<unset>';
 
 		++$::_FILTER_CALLS;
-
 
 		$orig_string ne $_ and die "$_ got trashed";
 
@@ -248,7 +247,7 @@ my $RE_kw_and_decl = qr^
 					my $RE = $RE_kw1  ; 	# always restart from the beginning, of incrementally modified program
 					# Same pattern good now, since pos() will have been reset by mod
 					# my $RE = ( $loopnum == 1 ? $RE_kw1 : $RE_kw1 ) ; 	# second version uses \G
-					if ( /$RE/g ) {	# try to match keyword, "select"
+					if ( m/$RE/g ) {	# try to match keyword, "select"
 						++$matched ;
 						$match=$1;
 						$start_match=pos() - length $1;
@@ -323,11 +322,13 @@ my $RE_kw_and_decl = qr^
 						else {
 							_DIE "$PKG: Maximum iterations reached while looking for select loop #$loopnum";
 						}
-					}
+					} # else
 
 					gobble_spaces();
 
+                                        # $DEBUG > 1 and warn " DDD sending to extract_bracketed() ===$_===\n";
 					( $loop_block, @rest ) = extract_bracketed($_, '{}');
+                                        # $DEBUG > 1 and warn " DDD extract_bracketed returned ===$loop_block===\n";
 					if (defined $loop_block and $loop_block ne "") {
 						++$matched;
 						$got_codeblock=1;
@@ -393,7 +394,8 @@ die" Can it ever get here?";
 				# If we got both, the $can_rewrite var shows true now
 				$can_rewrite = $matched >= 2 ? 1 : 0;
 
-				# warn "Calling MATCHES2FIELDS with \$loop_list of $loop_list\n";
+                                        # $DEBUG > 1 and warn "Calling MATCHES2FIELDS with \$loop_list of $loop_list\n";
+                                        # $DEBUG > 1 and warn "Calling MATCHES2FIELDS with \$loop_block of ===$loop_block===\n";
 				if ($can_rewrite) {
 					my $replacer = enloop_codeblock
 							matches2fields ( $loop_decl,
@@ -411,7 +413,7 @@ die" Can it ever get here?";
 				$DEBUG_FILT > 2 and warn "CONTINUING FIND_LOOP\n"	;
 			}
 			#warn "Leaving $subname 1 \n";
-		}
+		} # else
 FILTER_EXIT:
 	# $Shell::POSIX::Select::filter_output="PRE-LOADING DUMP VAR, loopnum was $loopnum";
 	if (
@@ -431,6 +433,8 @@ FILTER_EXIT:
 	} # if 0
 
 	$loopnum > 0 and $Shell::POSIX::Select::filter_output=$_;
+                # Restore original string-like parts of the code:
+                $Shell::POSIX::Select::filter_output =~ s/$Filter::Simple::placeholder/${$Filter::Simple::components[unpack('N',$1)]}/ge;
 		$LOGGING and print USERPROG $_;	# $_ unset 2nd call; label starts below
 		$DEBUG_FILT > 2 and _WARN "Leaving $subname on call #$::_FILTER_CALLS\n";
 	} # end sub filter
@@ -471,11 +475,6 @@ sub matches2fields {
 
 	my ( $debugging_code, $codeblock2,  );
 	my ( $decl, $loop_var, $values, $codeblock, $fullmatch ) = @_;
-
-	$debugging_code = "";
-
-
-
 
 	$debugging_code = "";
 	if ($U_DEBUG > 3) {
@@ -547,8 +546,8 @@ sub matches2fields {
 	unless ($default_loopvar or $loop_var =~ /^\$::\w+/) {
 		# don't check if I inserted it myself, or is in form $::stuff,
 		# which extract_variable() doesn't properly extract
-			# Now let's see if Damian likes it:
-			$DEBUG > 1 and show_subs ("Pre-extract_variable 3\n");
+          $DEBUG > 1 and warn "Pre-extract_variable 3\n";
+          # Now let's see if Damian likes it:
 		my ( $loop_var2, @rest ) = extract_variable($loop_var);
 		if ( $loop_var2 ne $loop_var ) {
 			$DEBUG > 1 and
@@ -566,12 +565,11 @@ sub matches2fields {
         # okay for this to be empty string; means user wants it global, or
         # declared it before loop
 
-
 	# make version of \$codeblock without curlies at either end
-	( $codeblock2 = $codeblock ) =~ s/^\s*\{|\}\s*$//g;
+	( $codeblock2 = $codeblock ) =~ s/\A\s*\{\s*|\s*\}\s*\z//g;
 
 	defined $decl and $decl eq 'unset' and undef $decl; # pass as undef
-
+        # $DEBUG > 1 and warn " DDD matches2fields() is returning codeblock2 ===$codeblock2===\n";
 	return ( $decl, $loop_var, $values, $codeblock2, $debugging_code );
 } # matches2fields
 
@@ -609,9 +607,9 @@ sub enloop_codeblock {
 			warn "LINE NUMBER FOR START OF USER CODE_BLOCK IS:  ", __LINE__, "\\n";
     _SEL_LOOP$loopnum: { # **** NEW SCOPE FOR SELECTLOOP #$loopnum ****
 	);
-	# warn "LOGGING is now $LOGGING\n";
+	# warn " DDD LOGGING is now $LOGGING\n";
 	$LOGGING and (print PART1 $parts[0] or _DIE "failed to write to PART1\n");
-		$DEBUG > 4 and warn "SETTING $arrayname to $values\n";
+        $DEBUG > 4 and warn "SETTING $arrayname to $values\n";
 
 	push @parts, qq(
 		# critical for values's contents to be resolved in user's scope
@@ -632,11 +630,7 @@ sub enloop_codeblock {
 		warn "\$codestring is: $codestring\n"; 
 		warn "\$dcode is: '$dcode'\n"; 
 		warn "\$arrayname is: $arrayname\n"; 
-
-		warn "Dcode is unset"; 
-		warn "arrayname is unset"; 
-		!defined $Shell::POSIX::Select::_autoprompt and
-			warn "autoprompt is unset"; 
+		!defined $Shell::POSIX::Select::_autoprompt and warn "autoprompt is unset"; 
 		!defined $codestring and warn "codestring is unset"; 
 	};
 
@@ -957,9 +951,6 @@ sub import {
 	my $subname = sub_name();
 	my %import;
 	$_import_called++;
-
-
-
 
 	shift;	# discard package name
 
