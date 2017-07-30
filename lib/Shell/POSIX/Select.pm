@@ -21,7 +21,7 @@ our ($Reply, $Heading, $Prompt);
 
 our ( $U_WARN, $REPORT, $DEBUG, $DEBUG_default, $_DEBUG,  );
 our ( $U_WARN_default, $_import_called, $U_DEBUG, $DEBUG_FILT );	
-our ( $DIRSEP, $sdump, $cdump, $script );	
+our ( $sdump, $cdump, $script );	
 # 
 our ( @ISA, @EXPORT, $PRODUCTION, $LOGGING, $PKG, $INSTALL_TESTING,$ON,$OFF, $BOLD, $SGR0, $COLS );
 
@@ -61,10 +61,6 @@ use Filter::Simple 0.84;
 use Text::Balanced 1.97 qw(extract_variable extract_bracketed);
 
 use Carp;
-
-# Why doesn't File:Spec just hand me the dir-separator char?
-# Sheesh, this should be a lot easier.
-( $DIRSEP = catfile ( 1,2 ) ) =~ s/^1(.*)2$/$1/;
 
 $U_DEBUG=1;
 $U_DEBUG=0;
@@ -915,13 +911,13 @@ sub log_files {
 		# converted to original data.
 		#
 		$DEBUG > 1 and $LOGGING > 0 and warn "Opening log files\n";	
-		open LOG,	"> $dir${DIRSEP}SELECT_log" or _DIE "Open LOG failed, $!\n";
-		open SOURCE,	"> $dir${DIRSEP}SELECT_source" or _DIE "Open SOURCE failed, $!\n";	
-		open USERPROG,	"> $dir${DIRSEP}SELECT_user_program" or _DIE "Open USERPROG failed, $!\n";	
-		open PART1,	"> $dir${DIRSEP}SELECT_part1" or _DIE "Open PART1 failed, $!\n";	
-		open PART2,	"> $dir${DIRSEP}SELECT_part2" or _DIE "Open PART2 failed, $!\n";
-		open PART3,	"> $dir${DIRSEP}SELECT_part3" or _DIE "Open PART3 failed, $!\n";	
-		open PART4,	"> $dir${DIRSEP}SELECT_part4" or _DIE "Open PART4 failed, $!\n";
+		open LOG,	'>', catfile($dir, 'SELECT_log') or _DIE "Open LOG failed, $!\n";
+		open SOURCE,	'>', catfile($dir, 'SELECT_source') or _DIE "Open SOURCE failed, $!\n";	
+		open USERPROG,	'>', catfile($dir, 'SELECT_user_program') or _DIE "Open USERPROG failed, $!\n";	
+		open PART1,	'>', catfile($dir, 'SELECT_part1') or _DIE "Open PART1 failed, $!\n";	
+		open PART2,	'>', catfile($dir, 'SELECT_part2') or _DIE "Open PART2 failed, $!\n";
+		open PART3,	'>', catfile($dir, 'SELECT_part3') or _DIE "Open PART3 failed, $!\n";	
+		open PART4,	'>', catfile($dir, 'SELECT_part4') or _DIE "Open PART4 failed, $!\n";
 		$LOGGING++;	# to avoid 2nd invocation
 		$DEBUG > 1 and $LOGGING > 0 and warn "Finished with log files\n";	
 	}	
@@ -1181,11 +1177,18 @@ $DEBUG > 2 and warn "37 Testmode set to $Shell::POSIX::Select::_testmode\n";
 				}
 			#}
 
-			$sdump =
-			($Shell::POSIX::Select::dump_data =~ /[a-z]/i ? # Dir prefix, or nothing
-				$Shell::POSIX::Select::dump_data : '.') . $DIRSEP . "$script.sdump" .
-			($Shell::POSIX::Select::dump_data =~ /[a-z]/i ? # Dir prefix, or nothing
-				'_ref' : '') ;
+                        $sdump = qq/$script.sdump/;
+                        if ($Shell::POSIX::Select::dump_data =~ /[a-z]/i)
+                          {
+                          $sdump = catfile($Shell::POSIX::Select::dump_data, $sdump .'_ref');
+                          }
+                        else
+                          {
+                          # TODO: probably should put it in the same
+                          # folder as the original program being
+                          # analyzed, rather than '.':
+                          $sdump = catfile('.', $sdump);
+                          }
 			($cdump = $sdump) =~ s/$script\.sdump/$script.cdump/;	# make code-dump name too
 
 # HERE next two lines squelch
