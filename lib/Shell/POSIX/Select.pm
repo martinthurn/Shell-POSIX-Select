@@ -2,15 +2,14 @@ package Shell::POSIX::Select;
 
 our $VERSION = '0.08';
 
-# Tim Maher, tim@teachmeperl.com, yumpy@cpan.org
-# Fri May  2 10:29:25 PDT 2003
-# Mon May  5 10:51:49 PDT 2003
+# TODO: Portable-ize tput stuff
 
-# TO DO: portable-ize tput stuff
-# dump user's code-block with same line numbers shown in
-# error messages for debugging ease
-# Add option to embolden menu numbers, to distinguish from
+# TODO: Dump user's code-block with same line numbers shown in error
+# messages for debugging ease
+
+# TODO: Add option to embolden menu numbers, to distinguish them from
 # choices that are also numbers
+
 # See documentation and copyright notice below =pod section below
 
 
@@ -53,8 +52,6 @@ BEGIN {
 sub import ;	# advance declaration
 
 use File::Spec::Functions (':ALL');
-use strict;
-# no strict 'refs';	# no problem now
 
 use File::Spec::Functions 0.7;
 use Filter::Simple 0.84;
@@ -62,9 +59,6 @@ use Filter::Simple 0.84;
 # Damian's been fixing bugs as I report them, so best to have recent version
 # This is the oldest version that I know works pretty well
 use Text::Balanced 1.97 qw(extract_variable extract_bracketed);
-
-# I've done most testing with this as yet unrelased version
-# use Text::Balanced 1.90 qw(extract_variable extract_bracketed);
 
 use Carp;
 
@@ -912,14 +906,13 @@ sub log_files {
 	if ( $LOGGING == 1 ) {	
 		$dir = tmpdir();
 		#
-		# USERPROG shows my changes, with	
-		# control-chars filling in as placeholders	
-		# for some pieces. For debugging purposes, I	
-		# find it helpful to print that out ASAP so	
-		# I have something to look at if the program	
-		# bombs out before SOURCE gets written out,	
-		# which is the same apart from placeholders	
-		# being converted to original data.	
+		# USERPROG shows my changes, with control-chars
+		# filling in as placeholders for some pieces. For
+		# debugging purposes, I find it helpful to print that
+		# out ASAP so I have something to look at if the
+		# program bombs out before SOURCE gets written out,
+		# which is the same apart from placeholders being
+		# converted to original data.
 		#
 		$DEBUG > 1 and $LOGGING > 0 and warn "Opening log files\n";	
 		open LOG,	"> $dir${DIRSEP}SELECT_log" or _DIE "Open LOG failed, $!\n";
@@ -2285,12 +2278,12 @@ See L<"IMPORTS AND OPTIONS"> for details.
 
 =head1 AUTHOR
 
- Tim Maher
+  Tim Maher
 
 =head1 MAINTAINER
 
- Martin Thurn
- mthurn@cpan.org
+  Martin Thurn
+  mthurn@cpan.org
 
 =begin html
 
@@ -2354,3 +2347,9 @@ you can redistribute it and/or modify it under the same terms as Perl itself.
 # vi:ts=2 sw=2:
 
 1;
+
+# Tim Maher, tim@teachmeperl.com, yumpy@cpan.org
+# Fri May  2 10:29:25 PDT 2003
+# Mon May  5 10:51:49 PDT 2003
+
+__END__
