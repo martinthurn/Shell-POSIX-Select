@@ -1,9 +1,10 @@
 /*.cdump
 /*.sdump
 /*META*
+/*_ref
 /*blib
 /MANIFEST
 /Makefile
 /Shell-POSIX-Select-*
-/*_ref
 /inc
+/*~

@@ -12,7 +12,6 @@ our $VERSION = '0.08';
 
 # See documentation and copyright notice below =pod section below
 
-
 # Not using Exporter.pm; doing typeglob-based exporting,
 # using adapted code from Damian's Switch.pm
 our ( @EXPORT_OK );
@@ -29,7 +28,8 @@ our ( @ISA, @EXPORT, $PRODUCTION, $LOGGING, $PKG, $INSTALL_TESTING,$ON,$OFF, $BO
 # on-screen?  By default, no maximum -- the number of columns will be
 # determined by the width of the terminal and the length of the meny
 # item strings.
-our $iColMax = 99;
+our $MaxColumns = 99;
+push @EXPORT_OK, '$MaxColumns';
 
 BEGIN {
 	$PKG  = __PACKAGE__ ;
@@ -854,9 +854,9 @@ sub make_menu {
 	my $columns = int( $COLS / $one_label );
 	$columns < 1 and $columns = 1;
         # Do not let the number of columns grow beyond the maximum:
-        if ($iColMax < $columns)
+        if ($MaxColumns < $columns)
           {
-          $columns = $iColMax;
+          $columns = $MaxColumns;
           } # if
 
 #	$DEBUG > 3 and
@@ -1455,12 +1455,13 @@ B<Screen>
 =head2 ship2me2.plx
 
 This variation on the preceding example shows how to use a custom menu-heading and interactive prompt.
+It also presents all menus in one column.
 
-    use Shell::POSIX::Select qw($Heading $Prompt);
+    use Shell::POSIX::Select qw($Heading $Prompt $MaxColumns);
 
-    $Heading='Select a Shipper' ;
-    $Prompt='Enter Vendor Number: ' ;
-
+    $Heading = 'Select a Shipper' ;
+    $Prompt = 'Enter Vendor Number: ' ;
+    $MaxColumns = 1;
     select $shipper ( 'UPS', 'FedEx' ) {
       print "\nYou chose: $shipper\n";
       last;
@@ -1677,6 +1678,7 @@ upon exit from a C<select> loop (see L<"Eof Detection">).
  use Shell::POSIX::Select (
      '$Prompt',      # to customize per-menu prompt
      '$Heading',     # to customize per-menu heading
+     '$MaxColumns',  # to limit visual number of columns of choices
      '$Eof',         # T/F for Eof detection
   # Variables must come first, then key/value options
      prompt   => 'Enter number of choice:',  # or 'whatever:'
@@ -1752,6 +1754,14 @@ Therefore, to make EOF detection as convenient and easy as possible,
 the programmer may import C<$Eof> and check it for a 
 I<TRUE> value after a C<select> loop.
 See L<"lc_filename.plx"> for a programming example.
+
+=head2 Number of Columns
+
+By default, the visual length of each option is examined,
+and the list is spread across as many columns as will reasonably fit in the terminal.
+You can override this behavior by importing and setting C<$MaxColumns>
+to the maximum number of columns you wish to display.
+See Scripts/max_columns_1.plx in the distribution as an example.
 
 =head2 Styles
 
@@ -2261,6 +2271,7 @@ For an example of its use, see L<"menu_ls.plx">.
 
  $Heading
  $Prompt
+ $MaxColumns
  $Eof
 
 See L<"IMPORTS AND OPTIONS"> for details.
