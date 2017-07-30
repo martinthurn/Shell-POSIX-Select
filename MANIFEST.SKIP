@@ -1,7 +1,9 @@
 ~$
 \&1
+AUTHOR
 \bHTML\b
 blib
+cdump$
 \bOld\b
 \bPages\b
 \bPatches\b
@@ -23,6 +25,7 @@ patch$
 \.ps$
 rej$
 \.releaserc
+sdump$
 semantic.cache
 TAGS
 t/embedded
