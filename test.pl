@@ -1,5 +1,6 @@
-#! /usr/bin/perl
-# test.pl
+#!perl -w
+
+my $VERSION = 1.02;
 
 use blib;
 
@@ -41,8 +42,9 @@ use Config;
 # `make test'. After `make install' it should work as `perl test.pl'
 
 
-BEGIN {
-	$VERSION='0.06';
+BEGIN 
+  {
+  my $MODULEVERSION='0.08';
 
 	# use Shell::POSIX::Select;	# use-ing modifies file handles, so avoid here
 	# require Shell::POSIX::Select;	# modifies file handles if "reference" set
@@ -52,7 +54,7 @@ BEGIN {
 	$DEBUG = 1; 	# Should only be set >2 on UNIX-like OS
 	$DEBUG = 0; 
 
-	print "\tShell::POSIX::Select v$VERSION Test Script\n";
+	print "\tShell::POSIX::Select v$MODULEVERSION Test Script\n";
 	$SCREENS = 1;	 # NOTE: Only 0 and 1 allowed, due to $num_tests
 	$SCREENS = 0;	 # NOTE: Only 0 and 1 allowed, due to $num_tests
 
@@ -77,6 +79,8 @@ BEGIN {
 	# @testfiles = 'arrayvar';	# FOR TESTING ONLY
 
 	chomp @testfiles;
+        # Ignore Emacs backup files:
+        @testfiles = grep { $_ !~ m/~/ } @testfiles;
 	
 	if (! -d $ref_dir or ! -r _ or ! -w _ or ! -x _ ) {
 		mkdir $ref_dir or chmod 0755, $ref_dir or
@@ -92,8 +96,6 @@ if (
 ) {
 	# This branch is only run by author, so it can be UNIX/Linux-specific
 	print "\nMAKING REFERENCE DATA\n";
-	`uname -n` eq "guru\n"  or
-		die "Hey! Generating reference data is the author's domain\n";
 	
 	$ENV{PERL5LIB}="/Select";	# needed for test programs
 	# system 'echo PERL5LIB is: $PERL5LIB'; 
