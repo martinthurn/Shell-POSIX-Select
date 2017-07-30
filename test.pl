@@ -1,6 +1,6 @@
 #!perl -w
 
-my $VERSION = 1.02;
+my $VERSION = 1.03;
 
 use blib;
 
@@ -66,12 +66,11 @@ BEGIN
 	$test_compile = 1;	# fails due to control-char "placeholders" in source
 	$test_compile = 0;
 
-	$ref_dir='Ref_Data';
-	$cbugs_dir='Compile_Bugs';
-	$rbugs_dir='Run_Bugs';
-	$test_dir='Test_Progs';
+  $ref_dir='Ref_Data';
+  my $cbugs_dir='Compile_Bugs';
+  my $rbugs_dir='Run_Bugs';
+  my $test_dir='Test_Progs';
 
-	# @Testdirs=( $test_dir, $ref_dir, $cbugs_dir, $rbugs_dir );
 	@testfiles=get_R_files();
 
 	# restrict to one file, if testing the testing script
