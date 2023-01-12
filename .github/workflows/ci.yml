@@ -33,7 +33,6 @@ jobs:
 
     - name: Run tests
       run: |
-        mknod /dev/tty c 5 0
         chmod 0666 /dev/tty
         perl Makefile.PL
         make test
