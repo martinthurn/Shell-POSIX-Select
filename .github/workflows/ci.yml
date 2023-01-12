@@ -33,7 +33,7 @@ jobs:
 
     - name: Run tests
       run: |
-        chmod 0666 /dev/tty
+        sudo chmod 0666 /dev/tty
         perl Makefile.PL
         make test
 
