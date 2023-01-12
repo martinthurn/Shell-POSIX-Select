@@ -1,0 +1,40 @@
+name: Perl
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, macos-latest, windows-latest]
+        perl: [ '5.20', '5.32', '5.36' ]
+
+    runs-on: ${{matrix-runner}}
+    name: OS ${{matrix.runner}} Perl ${{matrix.perl}}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Perl
+      uses: shogo82148/actions-setup-perl@v1
+      with:
+          perl-version: ${{matrix.perl}}
+          distribution: ${{ (startsWith(matrix.runner, 'windows-') && 'strawberry') || 'default' }}
+
+    - name: Show Perl version
+      run: |
+        perl -v
+
+    - name: Install modules
+      run: |
+        cpanm -v
+        cpanm --installdeps --notest.
+
+    - name: Run tests
+      run: |
+        perl Makefile.PL
+        make test
+
