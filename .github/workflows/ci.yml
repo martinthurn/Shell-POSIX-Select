@@ -30,8 +30,7 @@ jobs:
 
     - name: Install modules
       run: |
-        cpanm -v
-        cpanm --installdeps --notest .
+        cpanm inc::Module::Install
 
     - name: Run tests
       run: |
